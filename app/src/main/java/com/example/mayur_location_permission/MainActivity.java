@@ -12,11 +12,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
-        implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 0;
-    private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity
                 sortedShops();
             } else {
                 // Permission request was denied.
-                Toast.makeText(this, "Location Permission Denied", Toast.LENGTH_SHORT).show();
+
                 locationPermissionExplainAlert();
             }
         }
