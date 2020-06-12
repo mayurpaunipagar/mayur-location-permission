@@ -16,8 +16,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted. Start camera preview Activity.
                 getLocation();
-                sortedShops();
             } else {
                 // Permission request was denied.
 
@@ -69,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED) {
             // Permission is already available, start camera preview
             getLocation();
-            sortedShops();
         } else {
             // Permission is missing and must be requested.
             requestLocationPermission();
@@ -142,13 +143,22 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
+                        Log.d(TAG, "onSuccess: ");
+                        if(location==null){
+                            //show user following messages
+                            //make sure Cell Network is ON
+                            //make sure Airplane mode is OFF
+                            //make sure Internet is ON
+                            Log.d(TAG, "onSuccess: Location null");
+                        }
                         if (location != null) {
                             //logic to handle location object
-                            Log.d(TAG, "getLocation: 6");
+                            Log.d(TAG, "onSuccess: Location not null");
                             mlocation=location;
                             Toast.makeText(MainActivity.this, ""+
                                     mlocation.getLatitude()+", "+
                                     mlocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                            sortedShops();
                         }
                     }
                 });
@@ -157,6 +167,20 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.d(TAG, "onFailure: "+e.toString());
+                    }
+                });
+        fusedLocationClient.getLastLocation()
+                .addOnCanceledListener(this, new OnCanceledListener() {
+                    @Override
+                    public void onCanceled() {
+                        Log.d(TAG, "onCanceled: ");
+                    }
+                });
+        fusedLocationClient.getLastLocation()
+                .addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        Log.d(TAG, "onComplete: ");
                     }
                 });
     }
